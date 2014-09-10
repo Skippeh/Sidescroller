@@ -1,0 +1,8 @@
+﻿// Microsoft.Xna.Framwork.Vector2
+{
+    "members":
+    {
+        "X": [1],
+        "Y": [2] // The only required part is the tag.
+    }
+}

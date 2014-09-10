@@ -1,0 +1,51 @@
+﻿{
+    "scale": 1,
+    "defaultFps": 3, // Default animation fps
+    "animations": [
+        {
+            "name": "idle",
+            "type": "swing",
+            "frames": [
+                [4, 4, 54, 54],
+                [61, 4, 54, 54],
+                [118, 4, 54, 54]
+            ]
+        },
+        {
+            "name": "walking",
+            "fps": 8,
+            "frames": [
+                // No speed defines means it will use the globally defined animation fps above.
+                [5, 121, 54, 54],
+                [62, 121, 54, 54],
+                [119, 121, 54, 54],
+                [176, 121, 54, 54],
+                [233, 121, 54, 54],
+                [290, 121, 54, 54],
+                [347, 121, 54, 54],
+                [404, 121, 54, 54]
+            ]
+        },
+        {
+            "name": "strike1",
+            "fps": 10,
+            "type": "swing",
+            "origin": [11, 8],
+            "frames": [
+                [5, 179, 89, 62],
+                [97, 179, 89, 62],
+                [189, 179, 89, 62, 0.25]
+            ]
+        },
+        {
+            "name": "strike2",
+            "fps": 10,
+            "origin": [11, 8],
+            "frames": [
+                [5, 244, 89, 62],
+                [97, 244, 89, 62],
+                [189, 244, 89, 62]
+            ]
+        }
+    ]
+}
