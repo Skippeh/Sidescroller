@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Graphics\Camera.cs" />
     <Compile Include="Client\Graphics\Sprite.cs" />
     <Compile Include="Client\Graphics\Text\BMFont.cs" />
     <Compile Include="Client\Graphics\Text\CharInfo.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Client\Graphics\WorldRenderer.cs" />
     <Compile Include="Client\Network\Messages\HailRequest.cs" />
     <Compile Include="Client\Network\NetworkClient.cs" />
-    <Compile Include="Shared\GameCode\Tile.cs" />
     <Compile Include="Server\GameCode\World.cs" />
     <Compile Include="Server\Network\Messages\HailResponse.cs" />
     <Compile Include="Server\Network\NetworkServer.cs" />
@@ -100,7 +100,9 @@
     <Compile Include="Shared\Tmx\TmxTilesetTile.cs" />
     <Compile Include="Shared\Utility.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Shared\Physics\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

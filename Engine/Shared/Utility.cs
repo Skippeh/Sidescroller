@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Engine.Client.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,6 +32,7 @@ namespace Engine.Shared
 
         public static GraphicsDevice GraphicsDevice { get { return gDevice; } }
         public static SpriteBatch SpriteBatch { get; private set; }
+        public static Camera Camera { get; private set; }
 
         private static GraphicsDevice gDevice;
         private static GraphicsDeviceManager graphics;
@@ -48,6 +50,7 @@ namespace Engine.Shared
             ContentDirectory = contentDirectory;
             SpriteBatch = new SpriteBatch(gDevice);
             content = contentManager;
+            Camera = new Camera();
         }
 
         public static string JsonRemoveComments(string json)
@@ -117,6 +120,11 @@ namespace Engine.Shared
         {
             var displayMode = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             return GetCenter(new Vector2(displayMode.X, displayMode.Y), size ?? Vector2.Zero);
+        }
+
+        public static Vector2 GetWindowSize()
+        {
+            return new Vector2(gDevice.Viewport.Width, gDevice.Viewport.Height);
         }
 
         public static Vector2 GetResolution()
@@ -233,10 +241,10 @@ namespace Engine.Shared
         /// <summary>
         /// Gets the color inbetween min and max at "distance". Black -> White would become gray.
         /// </summary>
-        /// <param name="distance">0 = min, 1 = max</param>
-        public static Color GetColorGradient(Color min, Color max, float distance)
+        /// <param name="distance">0 = min, 1 = max. If null then it will be randomized.</param>
+        public static Color GetColorGradient(Color min, Color max, float? distance)
         {
-            return new Color(Vector4.Lerp(min.ToVector4(), max.ToVector4(), distance));
+            return new Color(Vector4.Lerp(min.ToVector4(), max.ToVector4(), distance ?? (float)random.NextDouble()));
         }
     }
 }

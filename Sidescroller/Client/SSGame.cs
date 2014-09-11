@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Engine.Client.Graphics;
 using Engine.Client.Graphics.Text;
 using Engine.Server.GameCode;
@@ -17,6 +18,9 @@ namespace Sidescroller.Client
 
         private KeyboardState oldState;
         private KeyboardState state;
+
+        private MouseState oldMState;
+        private MouseState mState;
 
         private World world;
         private WorldRenderer worldRenderer;
@@ -55,6 +59,9 @@ namespace Sidescroller.Client
 
             fontTest = new BMFont(GraphicsDevice, "content/fonts/open_sans", false);
 
+            Utility.Camera.Position = world.Map.Layers.First(layer => layer.Type == TmxLayerType.Object).Objects["PlayerSpawn"][0].Position * world.Scale;
+            Console.WriteLine(Utility.Camera.Position);
+
             oldState = state = Keyboard.GetState();
             base.Initialize();
         }
@@ -68,12 +75,29 @@ namespace Sidescroller.Client
                 testSprite.PlayAnimationOnce("strike2");
 
             oldState = state;
+            oldMState = mState;
             state = Keyboard.GetState();
+            mState = Mouse.GetState();
 
             if (state.IsKeyDown(Keys.R) && !oldState.IsKeyDown(Keys.R))
             {
                 Console.WriteLine("Reloading sprite");
                 testSprite.Reload();
+            }
+
+            //Utility.Camera.Move(new Vector2(10, 0) * Time.DT);
+
+            if (mState.RightButton == ButtonState.Pressed)
+            {
+                Utility.Camera.Rotation += (mState.X - oldMState.X) / 4f;
+            }
+            if (mState.LeftButton == ButtonState.Pressed)
+            {
+                Utility.Camera.Move(-new Vector2(mState.X - oldMState.X, mState.Y - oldMState.Y), true);
+            }
+            if (mState.MiddleButton == ButtonState.Pressed && oldMState.MiddleButton == ButtonState.Released)
+            {
+                Utility.Camera.Rotation = 0;
             }
 
             base.Update(gameTime);
@@ -84,9 +108,10 @@ namespace Sidescroller.Client
             GraphicsDevice.Clear(worldRenderer.ClearColor);
 
             var spriteBatch = Utility.SpriteBatch;
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null);
+            Utility.Camera.UpdateTransformation();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, Utility.Camera.TransformationMatrix);
 
-            //testSprite.Draw(spriteBatch, new Vector2(15, 5), SpriteEffects.None);
+            testSprite.Draw(spriteBatch, new Vector2(0, 0), SpriteEffects.None);
 
             base.Draw(gt); // spritebatch is ended from a component.
         }

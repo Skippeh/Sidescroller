@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -238,6 +239,20 @@ namespace Engine.Shared.Tmx
             }
 
             return null;
+        }
+
+        /// <summary>Returns the tile's information at the given tile coordinates in the specified layer.</summary>
+        public TmxTilesetTile FindTile(int x, int y, int layer)
+        {
+            int index = (y * Width) + x;
+
+            if (index > Width * Height || index < 0)
+                return null;
+
+            if (layer < 0 || layer > Layers.Count)
+                throw new IndexOutOfRangeException("layer out of range: " + layer + "(count = " + Layers.Count + ")");
+
+            return FindTileInfo(Layers[layer].Data[index]);
         }
     }
 }

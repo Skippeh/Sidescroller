@@ -38,8 +38,8 @@
                  "type":"PlayerSpawn",
                  "visible":true,
                  "width":0,
-                 "x":642,
-                 "y":370
+                 "x":955,
+                 "y":379
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -145,7 +145,7 @@
  "properties":
     {
      "ClearColor":"41,41,41",
-     "Scale":"1"
+     "Scale":"2"
     },
  "tileheight":16,
  "tilesets":[
