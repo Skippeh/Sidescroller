@@ -129,6 +129,7 @@ namespace Engine.Shared
             return gDevice.Adapter.SupportedDisplayModes.ToArray();
         }
 
+        /// <param name="filePath">If the path starts with '/' or '\' they will be ignored.</param>
         public static string GetContentDir(string filePath)
         {
             if (filePath.StartsWith("/") || filePath.StartsWith("\\"))
@@ -137,6 +138,7 @@ namespace Engine.Shared
             return Path.Combine(ContentDirectory, filePath);
         }
 
+        /// <param name="fromContent">If true then the path will be assumed to be relative to the content directory.</param>
         public static Texture2D LoadTexture2D(string path, bool fromContent = true)
         {
             path = fromContent ? GetContentDir(path) : path;
@@ -181,7 +183,7 @@ namespace Engine.Shared
             hex = hex.Replace("#", "");
 
             if (hex.Length != 6 && hex.Length != 8)
-                throw new ArgumentException("Hex format is not valid. Needs to be 6 or 8 in length excluding optional '#' character.");
+                throw new ArgumentException("Hex format is not valid. Needs to be 6 or 8 in length, excluding optional '#' character.");
 
             byte r, g, b, a;
             byte pos = 0;
@@ -207,20 +209,34 @@ namespace Engine.Shared
             return new Color(r, g, b, a);
         }
 
-        // Todo: Should rewrite this so it gradually changes from min to max by random amount.
-        public static Color GetRandomColor(Color min, Color max, byte? alpha = 255)
+        /// <param name="min">If null then black.</param>
+        /// <param name="max">If null then white.</param>
+        /// <param name="alpha">If null then the alpha will be randomized aswell.</param>
+        public static Color GetRandomColor(Color? min = null, Color? max = null, byte? alpha = 255)
         {
+            Color _min = min ?? Color.Black;
+            Color _max = max ?? Color.White;
+            
             int r, g, b, a;
             a = alpha ?? 0;
 
-            r = random.Next(min.R, max.R + 1);
-            g = random.Next(min.G, max.G + 1);
-            b = random.Next(min.B, max.B + 1);
+            r = random.Next(_min.R, _max.R + 1);
+            g = random.Next(_min.G, _max.G + 1);
+            b = random.Next(_min.B, _max.B + 1);
 
             if (alpha == null)
-                a = random.Next(min.A, max.A + 1);
+                a = random.Next(_min.A, _max.A + 1);
 
             return new Color(r, g, b, a);
+        }
+
+        /// <summary>
+        /// Gets the color inbetween min and max at "distance". Black -> White would become gray.
+        /// </summary>
+        /// <param name="distance">0 = min, 1 = max</param>
+        public static Color GetColorGradient(Color min, Color max, float distance)
+        {
+            return new Color(Vector4.Lerp(min.ToVector4(), max.ToVector4(), distance));
         }
     }
 }
