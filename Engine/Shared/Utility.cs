@@ -32,6 +32,7 @@ namespace Engine.Shared
 
         public static GraphicsDevice GraphicsDevice { get { return gDevice; } }
         public static SpriteBatch SpriteBatch { get; private set; }
+        public static SpriteBatch GuiSpritebatch { get; private set; }
         public static Camera Camera { get; private set; }
 
         private static GraphicsDevice gDevice;
@@ -49,6 +50,7 @@ namespace Engine.Shared
             gDevice = graphics.GraphicsDevice;
             ContentDirectory = contentDirectory;
             SpriteBatch = new SpriteBatch(gDevice);
+            GuiSpritebatch = new SpriteBatch(gDevice);
             content = contentManager;
             Camera = new Camera();
         }

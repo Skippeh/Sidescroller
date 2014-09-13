@@ -88,7 +88,7 @@ namespace Engine.Client.Graphics
             
             foreach (var layer in world.Map.Layers)
             {
-                if (!layer.Visible || layer.Opacity == 0 || layer.Type != TmxLayerType.Tile)
+                if (!layer.Visible || layer.Opacity == 0f || layer.Type != TmxLayerType.Tile)
                     continue;
 
                 for (int y = getYStart(position.Y, chunkSize); y < getYEnd(position.Y, chunkSize); ++y)

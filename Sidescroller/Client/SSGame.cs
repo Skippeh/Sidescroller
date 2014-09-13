@@ -27,6 +27,8 @@ namespace Sidescroller.Client
 
         private BMFont fontTest;
 
+        private bool drawDebug = false;
+
         public SSGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,6 +43,7 @@ namespace Sidescroller.Client
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
             Utility.Initialize(graphics, Content, "content");
@@ -54,12 +57,11 @@ namespace Sidescroller.Client
             Components.Add(world);
             Components.Add(worldRenderer);
 
-            Components.Add(new SpritebatchRenderer(this, Utility.SpriteBatch) {DrawOrder = Int32.MaxValue});
+            Components.Add(new SpritebatchEnder(this, Utility.SpriteBatch, Utility.GuiSpritebatch) {DrawOrder = Int32.MaxValue});
 
             fontTest = new BMFont(GraphicsDevice, "content/fonts/open_sans", false);
 
             Utility.Camera.Position = world.Map.Layers.First(layer => layer.Type == TmxLayerType.Object).Objects["PlayerSpawn"][0].Position * world.Scale;
-            Console.WriteLine(Utility.Camera.Position);
 
             oldState = state = Keyboard.GetState();
             base.Initialize();
@@ -84,8 +86,6 @@ namespace Sidescroller.Client
                 testSprite.Reload();
             }
 
-            //Utility.Camera.Move(new Vector2(10, 0) * Time.DT);
-
             if (mState.RightButton == ButtonState.Pressed)
             {
                 Utility.Camera.Rotation += (mState.X - oldMState.X) / 4f;
@@ -104,6 +104,9 @@ namespace Sidescroller.Client
                 Utility.Camera.SetShake(2, 0.5f, 0.75f);
             }
 
+            if (state.IsKeyDown(Keys.F12) && !oldState.IsKeyDown(Keys.F12))
+                drawDebug = !drawDebug;
+
             base.Update(gameTime);
         }
 
@@ -112,26 +115,39 @@ namespace Sidescroller.Client
             GraphicsDevice.Clear(worldRenderer.ClearColor);
 
             var spriteBatch = Utility.SpriteBatch;
+            var guiSpriteBatch = Utility.GuiSpritebatch;
             Utility.Camera.UpdateTransformation();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null, null, Utility.Camera.TransformationMatrix);
+            guiSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, null, null);
 
-            testSprite.Draw(spriteBatch, new Vector2(0, 0), SpriteEffects.None);
+            if (drawDebug)
+            {
+                var text = "Press F12 to toggle debug\nSpace: shake test\nLeft mouse drag: move camera\nRight mouse drag: rotate camera\nMid mouse click: reset camera rotation";
+                guiSpriteBatch.DrawString(fontTest, text, new Vector2(10, 10));
+                var size = fontTest.MeasureString(text);
+                testSprite.Draw(guiSpriteBatch, new Vector2(10, size.Y + 10), SpriteEffects.None);
+            }
+            else
+            {
+                guiSpriteBatch.DrawString(fontTest, "Press F12 to toggle debug", new Vector2(10, 10));
+            }
 
-            base.Draw(gt); // spritebatch is ended from a component.
+            base.Draw(gt); // spritebatches are ended from a component (below).
         }
 
-        private class SpritebatchRenderer : DrawableGameComponent
+        private class SpritebatchEnder : DrawableGameComponent
         {
-            private readonly SpriteBatch spriteBatch;
+            private readonly SpriteBatch[] spriteBatches;
 
-            public SpritebatchRenderer(Game game, SpriteBatch spriteBatch) : base(game)
+            public SpritebatchEnder(Game game, params SpriteBatch[] spriteBatches) : base(game)
             {
-                this.spriteBatch = spriteBatch;
+                this.spriteBatches = spriteBatches;
             }
 
             public override void Draw(GameTime gameTime)
             {
-                spriteBatch.End();
+                foreach (var sb in spriteBatches)
+                    sb.End();
             }
         }
     }

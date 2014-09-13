@@ -95,7 +95,7 @@ namespace Engine.Client.Graphics.Text
 
                 if (ch == '\n' || ch == '\r')
                 {
-                    x = 0;
+                    x = position.X;
                     y += (Info.LineHeight + Info.SpacingV) * size;
                     continue;
                 }
@@ -139,6 +139,7 @@ namespace Engine.Client.Graphics.Text
         public Vector2 MeasureString(string text)
         {
             int width = 0;
+            int longestWidth = 0;
             int height = Info.Base;
 
             for (int i = 0; i < text.Length; ++i)
@@ -147,6 +148,10 @@ namespace Engine.Client.Graphics.Text
 
                 if (ch == '\n' || ch == '\r')
                 {
+                    if (width > longestWidth)
+                        longestWidth = width;
+
+                    width = 0;
                     height += Info.LineHeight + Info.SpacingV;
                     continue;
                 }
@@ -172,7 +177,8 @@ namespace Engine.Client.Graphics.Text
                 width += chInfo.XAdvance + chKern.Amount + Info.SpacingH;
             }
 
-            return new Vector2(width, height);
+            longestWidth = width;
+            return new Vector2(longestWidth, height);
         }
 
         private Texture2D loadAlphaMap(string path)
