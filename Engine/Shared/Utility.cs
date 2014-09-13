@@ -41,7 +41,7 @@ namespace Engine.Shared
         private static readonly Dictionary<string, Texture2D> loadedTextures = new Dictionary<string, Texture2D>();
         private static readonly Dictionary<string, Effect> loadedEffects = new Dictionary<string, Effect>();
 
-        private static readonly Random random = new Random();
+        public static readonly Random Random = new Random();
 
         public static void Initialize(GraphicsDeviceManager graphics, ContentManager contentManager, string contentDirectory)
         {
@@ -228,12 +228,12 @@ namespace Engine.Shared
             int r, g, b, a;
             a = alpha ?? 0;
 
-            r = random.Next(_min.R, _max.R + 1);
-            g = random.Next(_min.G, _max.G + 1);
-            b = random.Next(_min.B, _max.B + 1);
+            r = Random.Next(_min.R, _max.R + 1);
+            g = Random.Next(_min.G, _max.G + 1);
+            b = Random.Next(_min.B, _max.B + 1);
 
             if (alpha == null)
-                a = random.Next(_min.A, _max.A + 1);
+                a = Random.Next(_min.A, _max.A + 1);
 
             return new Color(r, g, b, a);
         }
@@ -244,7 +244,7 @@ namespace Engine.Shared
         /// <param name="distance">0 = min, 1 = max. If null then it will be randomized.</param>
         public static Color GetColorGradient(Color min, Color max, float? distance)
         {
-            return new Color(Vector4.Lerp(min.ToVector4(), max.ToVector4(), distance ?? (float)random.NextDouble()));
+            return new Color(Vector4.Lerp(min.ToVector4(), max.ToVector4(), distance ?? (float)Random.NextDouble()));
         }
     }
 }

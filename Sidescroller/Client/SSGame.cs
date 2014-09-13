@@ -54,7 +54,6 @@ namespace Sidescroller.Client
             Components.Add(world);
             Components.Add(worldRenderer);
 
-            // Add this LAST! or else spritebatch won't render!
             Components.Add(new SpritebatchRenderer(this, Utility.SpriteBatch) {DrawOrder = Int32.MaxValue});
 
             fontTest = new BMFont(GraphicsDevice, "content/fonts/open_sans", false);
@@ -98,6 +97,11 @@ namespace Sidescroller.Client
             if (mState.MiddleButton == ButtonState.Pressed && oldMState.MiddleButton == ButtonState.Released)
             {
                 Utility.Camera.Rotation = 0;
+            }
+
+            if (state.IsKeyDown(Keys.Space))
+            {
+                Utility.Camera.SetShake(2, 0.5f, 0.75f);
             }
 
             base.Update(gameTime);
