@@ -10,12 +10,15 @@ namespace Engine.Client.Graphics
     public class Camera
     {
         public Matrix TransformationMatrix { get; private set; }
-
         public Vector2 Position;
+
+        /// <summary>Gets or sets the current Zoom level. 2x would mean everything is 2x larger.</summary>
         public float Zoom;
 
         private Matrix negRotation;
         private float rotationAngle;
+
+        /// <summary>Gets or sets the current camera rotation in degrees.</summary>
         public float Rotation
         {
             get { return rotationAngle; }
@@ -37,11 +40,13 @@ namespace Engine.Client.Graphics
             Zoom = 1f;
         }
 
+        /// <summary>Transforms screen units to world units.</summary>
         public Vector2 ScreenToWorld(Vector2 screenPosition)
         {
             return Vector2.Transform(screenPosition, Matrix.Invert(TransformationMatrix));
         }
 
+        /// <summary>Transforms world units to screen units.</summary>
         public Vector2 WorldToScreen(Vector2 worldPosition)
         {
             return Vector2.Transform(worldPosition, TransformationMatrix);
@@ -63,7 +68,6 @@ namespace Engine.Client.Graphics
 
                 positionShake *= Vector2.Lerp(Vector2.Zero, positionShake, Utility.Random.NextDouble() > 0.5 ? amount01 : -amount01);
                 rotationShake = MathHelper.Lerp(0, rotationShake, amount01);
-                Console.WriteLine(positionShake);
             }
 
             var matrix = Matrix.Identity;
@@ -75,17 +79,12 @@ namespace Engine.Client.Graphics
             TransformationMatrix = matrix;
         }
 
+        /// <summary>Moves the camera by the given amount in pixels.</summary>
         /// <param name="relative">If true, position added will be relative to current camera rotation.</param>
         public void Move(Vector2 amount, bool relative = false)
         {
-            if (relative)
-            {
-                Position += Vector2.Transform(amount, negRotation);
-            }
-            else
-            {
-                Position += amount;
-            }
+            Position += relative ? Vector2.Transform(amount, negRotation)
+                                 : amount;
         }
 
         /// <param name="relative">If true, position added will be relative to current camera rotation.</param>
@@ -103,7 +102,7 @@ namespace Engine.Client.Graphics
         /// <summary>Shakes the camera position by pixels and rotation by degrees.</summary>
         /// <param name="positionAmount">The offset in pixels.</param>
         /// <param name="rotationAmount">The offset in degrees.</param>
-        /// <param name="falloff">Time in seconds to dissipate. Set to 0 to shake until manually turning off.</param>
+        /// <param name="falloff">Time in seconds to dissipate. Set to 0 to shake until manually turned off.</param>
         public void SetShake(float positionAmount, float rotationAmount, float falloff = 0)
         {
             shakeIntensityP = positionAmount;
@@ -111,6 +110,14 @@ namespace Engine.Client.Graphics
             shakeStartTime = Time.TotalDT;
             shakeFalloff = falloff;
             shakeInfinitely = falloff == 0f;
+        }
+
+        /// <summary>Shakes the camera position by pixels and rotation by degrees.</summary>
+        /// <param name="positionAmount">The offset in pixels.</param>
+        /// <param name="falloff">Time in seconds to dissipate. Set to 0 to shake until manually turned off.</param>
+        public void SetShake(float positionAmount, float falloff = 0)
+        {
+            SetShake(positionAmount, 0, falloff);
         }
     }
 }
